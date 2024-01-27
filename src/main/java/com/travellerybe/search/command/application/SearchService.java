@@ -85,7 +85,6 @@ public class SearchService {
 
     @Transactional
     public SearchResDto searchByTraveler(User user, String travelerName, Pageable pageable) {
-        saveHistory(user, travelerName);
         User traveler = userRepository.findByUsername(travelerName).orElseThrow(
                 () -> new AuthException(NOT_FOUND_MEMBER));
         Page<Travel> travels = travelRepository.findAllByUser(traveler, pageable);
@@ -96,7 +95,6 @@ public class SearchService {
 
     @Transactional
     public SearchResDto searchByTag(User user, String tagName, Pageable pageable) {
-        saveHistory(user, tagName);
         Tag tag = tagsRepository.findByName(tagName).orElseThrow(
                 () -> new TravelException(NOT_FOUND_TAG));
         Page<Travel> travels = travelRepository.findAllByTagsContaining(tag, pageable);
@@ -107,7 +105,6 @@ public class SearchService {
 
     @Transactional
     public SearchResDto searchByDestination(User user, String destinationName, Pageable pageable) {
-        saveHistory(user, destinationName);
         Destination destination = destinationRepository.findByName(destinationName).orElseThrow(
                 () -> new TravelException(NOT_FOUND_DESTINATION));
         Page<Travel> travels = travelRepository.findAllByDestination(destination, pageable);
