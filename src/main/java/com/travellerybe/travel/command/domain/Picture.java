@@ -39,12 +39,4 @@ public class Picture extends BaseEntity {
     private Date date;
     private String name;
     private String mime;
-
-    public void setLocationGroup(LocationGroup locationGroup) {
-        this.locationGroup = locationGroup;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

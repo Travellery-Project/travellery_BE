@@ -14,4 +14,6 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
     List<SearchHistory> findByUserOrderByCreatedDateDesc(User user);
 
     List<SearchHistory> findAllByUser(User user);
+
+    boolean existsByUserAndKeyword(User user, String keyword);
 }

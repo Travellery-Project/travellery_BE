@@ -41,7 +41,6 @@ public class TravelController {
     @PostMapping("/register/location-group")
     public ResponseEntity<String> registerLocationGroup(@AuthenticationPrincipal User user,
                                                         @RequestBody RegisterLocationGroupDto registerLocationGroupDto) {
-        log.info(registerLocationGroupDto.locationGroup().getSpecificLocation());
 
         travelService.registerLocationGroup(registerLocationGroupDto, user);
         return ResponseEntity.ok().body("HTTP_200_OK");

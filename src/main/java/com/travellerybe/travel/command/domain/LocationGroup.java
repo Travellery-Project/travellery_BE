@@ -1,11 +1,11 @@
 package com.travellerybe.travel.command.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.travellerybe.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +20,7 @@ import java.util.List;
 public class LocationGroup extends BaseEntity {
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_id")
     private Travel travel;
 

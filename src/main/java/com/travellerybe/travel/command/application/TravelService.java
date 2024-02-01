@@ -6,6 +6,7 @@ import com.travellerybe.like.command.domain.Likes;
 import com.travellerybe.like.query.repository.LikesRepository;
 import com.travellerybe.travel.command.domain.*;
 import com.travellerybe.travel.exception.TravelException;
+import com.travellerybe.travel.query.dto.request.PictureDto;
 import com.travellerybe.travel.query.dto.request.RegisterLocationGroupDto;
 import com.travellerybe.travel.query.dto.request.RegisterTravelDto;
 import com.travellerybe.travel.query.dto.response.PictureResDto;
@@ -38,17 +39,15 @@ import static com.travellerybe.travel.exception.TravelExceptionType.S3_UPLOAD_FA
 @Slf4j
 @Transactional(readOnly = true)
 public class TravelService {
-    private final DestinationRepository destinationRepository;
-    private final LikesRepository likesRepository;
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    private final DestinationRepository destinationRepository;
+    private final LikesRepository likesRepository;
     private final TagRepository tagsRepository;
     private final PictureRepository pictureRepository;
     private final LocationGroupRepository locationGroupRepository;
     private final TravelRepository travelRepository;
-
     private final AmazonS3Client amazonS3Client;
 
     @Transactional
@@ -108,31 +107,12 @@ public class TravelService {
         Travel travel = travelRepository.findById(registerLocationGroupDto.travelId())
                 .orElseThrow(() -> new TravelException(NOT_FOUND_TRAVEL));
 
-        registerLocationGroupDto.locationGroup().setTravel(travel);
+        LocationGroup locationGroup = locationGroupRepository.save(registerLocationGroupDto.toEntityWithTravel(travel));
 
-        LocationGroup locationGroup = locationGroupRepository.save(LocationGroup.builder()
-                .location(registerLocationGroupDto.locationGroup().getLocation())
-                .travel(travel)
-                .startDate(registerLocationGroupDto.locationGroup().getStartDate())
-                .endDate(registerLocationGroupDto.locationGroup().getEndDate())
-                .address(registerLocationGroupDto.locationGroup().getAddress())
-                .description(registerLocationGroupDto.locationGroup().getDescription())
-                .latitude(registerLocationGroupDto.locationGroup().getLatitude())
-                .longitude(registerLocationGroupDto.locationGroup().getLongitude())
-                .specificLocation(registerLocationGroupDto.locationGroup().getSpecificLocation())
-                .specificAddress(registerLocationGroupDto.locationGroup().getSpecificAddress())
-                .build());
+        List<PictureDto> picturesDto = registerLocationGroupDto.locationGroup().pictures();
+        List<Picture> pictures = picturesDto.stream().map(picture ->
+                picture.toEntityWithUserAndLocationGroup(user, locationGroup)).toList();
 
-        List<Picture> pictures = registerLocationGroupDto.locationGroup().getPictures().stream().map(picture ->
-                Picture.builder()
-                        .name(picture.getName())
-                        .date(picture.getDate())
-                        .path(picture.getPath())
-                        .mime(picture.getMime())
-                        .locationGroup(locationGroup)
-                        .user(user)
-                        .build()
-        ).toList();
         pictureRepository.saveAll(pictures);
     }
 
