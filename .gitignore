@@ -38,4 +38,7 @@ out/
 
 
 ### properties ###
+database.properties
+oauth.properties
+s3.properties
 src/main/resources/properties/
