@@ -6,8 +6,9 @@ import com.travellerybe.travel.command.domain.LocationGroup;
 import com.travellerybe.travel.command.domain.Tag;
 import com.travellerybe.travel.command.domain.Travel;
 import com.travellerybe.travel.query.dto.request.RegisterTravelDto;
+import com.travellerybe.travel.query.dto.response.FeedDto;
 import com.travellerybe.travel.query.dto.response.RegisterTravelResDto;
-import com.travellerybe.travel.query.dto.response.TravelResDto;
+import com.travellerybe.travel.query.dto.response.TravelDto;
 import com.travellerybe.travel.query.repository.DestinationRepository;
 import com.travellerybe.travel.query.repository.LocationGroupRepository;
 import com.travellerybe.travel.query.repository.TagRepository;
@@ -18,14 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +38,6 @@ public class TravelService {
     private final TagRepository tagsRepository;
     private final LocationGroupRepository locationGroupRepository;
     private final TravelRepository travelRepository;
-    private final RedisTemplate<String, List<TravelResDto>> redisTemplate;
 
     @Transactional
     public RegisterTravelResDto registerTravel(RegisterTravelDto registerTravelDto, User user) {
@@ -75,39 +73,25 @@ public class TravelService {
     }
 
     @Cacheable("travelFeedLatest")
-    public List<TravelResDto> getTravelFeed(Pageable pageable, User user) {
+    public FeedDto getTravelFeed(Pageable pageable) {
         long startTime = System.currentTimeMillis();
 
-        String feedCacheKey = "travelFeed:" + pageable.getPageNumber();
-
-        // 캐시 에서 데이터 조회
-        List<TravelResDto> cachedTravelFeed = redisTemplate.opsForValue().get(feedCacheKey);
-        if (cachedTravelFeed != null) {
-            long endTime = System.currentTimeMillis();
-            log.info("query execute time : {} ms", endTime - startTime);
-            return cachedTravelFeed;
-        }
-
         Page<Travel> travels = travelRepository.findAll(pageable);
-        List<TravelResDto> travelsDto = travels.stream().map(travel ->
-                TravelResDto.fromTravel(travel, false)).toList();
+        List<TravelDto> travelsDto = travels.stream().map(travel ->
+                TravelDto.fromTravel(travel, false)).toList();
 
         long endTime = System.currentTimeMillis();
-
-        redisTemplate.opsForValue().set(feedCacheKey, travelsDto);
-        redisTemplate.expire(feedCacheKey, 1, TimeUnit.MINUTES);
-
         log.info("query execute time : {} ms", endTime - startTime);
 
-        return travelsDto;
+        return new FeedDto(travelsDto);
 
 //        return travels.stream().map(travel ->
 //                TravelResDto.fromTravel(travel, likesRepository.existsByUserAndTravel(user, travel))).toList();
     }
 
-    public List<TravelResDto> getUserTravels(User user, Pageable pageable) {
+    public List<TravelDto> getUserTravels(User user, Pageable pageable) {
         List<Travel> travels = travelRepository.findAllByUser(user, pageable).getContent();
-        return travels.stream().map(travel -> TravelResDto.fromTravel(travel, null)).toList();
+        return travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
     }
 
     public List<LocationGroup> getTravelDetails(Long travelId) {

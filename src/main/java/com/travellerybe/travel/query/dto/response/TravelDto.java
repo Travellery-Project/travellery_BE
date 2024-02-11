@@ -6,7 +6,7 @@ import com.travellerybe.travel.command.domain.Travel;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record TravelResDto(
+public record TravelDto(
         Long id,
         LocalDateTime createdDate,
         String thumbnail,
@@ -15,8 +15,8 @@ public record TravelResDto(
         String destination,
         Boolean likes
 ) {
-    public static TravelResDto fromTravel(Travel travel, Boolean likes) {
-        return new TravelResDto(
+    public static TravelDto fromTravel(Travel travel, Boolean likes) {
+        return new TravelDto(
                 travel.getId(),
                 travel.getCreatedDate(),
                 travel.getThumbnail(),

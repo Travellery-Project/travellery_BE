@@ -1,11 +1,12 @@
 package com.travellerybe.travel.presentation;
 
+import com.travellerybe.travel.query.dto.response.FeedDto;
 import com.travellerybe.user.command.domain.User;
 import com.travellerybe.travel.command.application.TravelService;
 import com.travellerybe.travel.command.domain.LocationGroup;
 import com.travellerybe.travel.query.dto.request.RegisterTravelDto;
 import com.travellerybe.travel.query.dto.response.RegisterTravelResDto;
-import com.travellerybe.travel.query.dto.response.TravelResDto;
+import com.travellerybe.travel.query.dto.response.TravelDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -31,15 +32,15 @@ public class TravelController {
     }
 
     @GetMapping("/feed/latest")
-    public ResponseEntity<List<TravelResDto>> getTravelFeed(@AuthenticationPrincipal User user,
-                                                            @SortDefault(sort = "createdDate", direction =
+    public ResponseEntity<FeedDto> getTravelFeed(@AuthenticationPrincipal User user,
+                                                 @SortDefault(sort = "createdDate", direction =
                                                                         Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(travelService.getTravelFeed(pageable, user));
+        return ResponseEntity.ok().body(travelService.getTravelFeed(pageable));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<TravelResDto>> getUserTravelFeed(@AuthenticationPrincipal User user,
-                                                                @SortDefault(sort = "createdDate", direction =
+    public ResponseEntity<List<TravelDto>> getUserTravelFeed(@AuthenticationPrincipal User user,
+                                                             @SortDefault(sort = "createdDate", direction =
                                                                             Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(travelService.getUserTravels(user, pageable));
     }

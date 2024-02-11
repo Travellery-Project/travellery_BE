@@ -4,7 +4,7 @@ import com.travellerybe.like.command.domain.Likes;
 import com.travellerybe.like.query.repository.LikesRepository;
 import com.travellerybe.travel.command.domain.Travel;
 import com.travellerybe.travel.exception.TravelException;
-import com.travellerybe.travel.query.dto.response.TravelResDto;
+import com.travellerybe.travel.query.dto.response.TravelDto;
 import com.travellerybe.travel.query.repository.TravelRepository;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +48,9 @@ public class LikesService {
         likesRepository.deleteByUserAndTravelId(user, travelId);
     }
 
-    public List<TravelResDto> getUserLikedTravel(User user, Pageable pageable) {
+    public List<TravelDto> getUserLikedTravel(User user, Pageable pageable) {
         List<Likes> likesList = likesRepository.getAllByUser(user, pageable).getContent();
 
-        return likesList.stream().map(likes -> TravelResDto.fromTravel(likes.getTravel(), true)).toList();
+        return likesList.stream().map(likes -> TravelDto.fromTravel(likes.getTravel(), true)).toList();
     }
 }

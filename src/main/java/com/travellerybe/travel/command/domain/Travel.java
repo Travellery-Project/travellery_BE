@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties({"Tag"})
-public class Travel extends BaseEntity {
+public class Travel extends BaseEntity implements Serializable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

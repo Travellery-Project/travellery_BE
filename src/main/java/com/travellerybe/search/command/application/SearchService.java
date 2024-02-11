@@ -9,7 +9,7 @@ import com.travellerybe.travel.command.domain.Destination;
 import com.travellerybe.travel.command.domain.Tag;
 import com.travellerybe.travel.command.domain.Travel;
 import com.travellerybe.travel.exception.TravelException;
-import com.travellerybe.travel.query.dto.response.TravelResDto;
+import com.travellerybe.travel.query.dto.response.TravelDto;
 import com.travellerybe.travel.query.repository.DestinationRepository;
 import com.travellerybe.travel.query.repository.TagRepository;
 import com.travellerybe.travel.query.repository.TravelRepository;
@@ -89,7 +89,7 @@ public class SearchService {
                 () -> new AuthException(NOT_FOUND_MEMBER));
         Page<Travel> travels = travelRepository.findAllByUser(traveler, pageable);
 
-        List<TravelResDto> travelRes = travels.stream().map(travel -> TravelResDto.fromTravel(travel, null)).toList();
+        List<TravelDto> travelRes = travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
         return new SearchResDto(travelRes, travels.getTotalElements());
     }
 
@@ -100,7 +100,7 @@ public class SearchService {
                 () -> new TravelException(NOT_FOUND_TAG));
         Page<Travel> travels = travelRepository.findAllByTagsContaining(tag, pageable);
 
-        List<TravelResDto> travelRes = travels.stream().map(travel -> TravelResDto.fromTravel(travel, null)).toList();
+        List<TravelDto> travelRes = travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
         return new SearchResDto(travelRes, travels.getTotalElements());
     }
 
@@ -111,7 +111,7 @@ public class SearchService {
                 () -> new TravelException(NOT_FOUND_DESTINATION));
         Page<Travel> travels = travelRepository.findAllByDestination(destination, pageable);
 
-        List<TravelResDto> travelRes = travels.stream().map(travel -> TravelResDto.fromTravel(travel, null)).toList();
+        List<TravelDto> travelRes = travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
         return new SearchResDto(travelRes, travels.getTotalElements());
     }
 
@@ -119,7 +119,7 @@ public class SearchService {
     public SearchResDto search(User user, String keyword, Pageable pageable) {
         saveHistory(user, keyword);
         Page<Travel> travels = travelRepository.findAllByKeyword(keyword, pageable);
-        List<TravelResDto> travelRes = travels.stream().map(travel -> TravelResDto.fromTravel(travel, null)).toList();
+        List<TravelDto> travelRes = travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
         return new SearchResDto(travelRes, travels.getTotalElements());
     }
 
