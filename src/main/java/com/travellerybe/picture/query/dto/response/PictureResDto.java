@@ -1,4 +1,4 @@
-package com.travellerybe.travel.query.dto.response;
+package com.travellerybe.picture.query.dto.response;
 
 import java.util.Date;
 

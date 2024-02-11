@@ -41,12 +41,13 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
             return;
         }
         String idToken = header.substring(7);
+        log.info("id token: {}", idToken);
 
         try {
             decodedToken = firebaseAuth.verifyIdToken(idToken);
         } catch (FirebaseAuthException e) {
             log.error("FirebaseAuthException : {}", e.getMessage());
-            setUnauthorizedResponse(response, "INVALID_TOKEN");
+            setUnauthorizedResponse(response);
             return;
         }
 
@@ -66,9 +67,9 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void setUnauthorizedResponse(HttpServletResponse response, String code) throws IOException {
+    private void setUnauthorizedResponse(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        response.getWriter().write("{\"code\":\"" + code + "\"}");
+        response.getWriter().write("{\"code\":\"" + "INVALID_TOKEN" + "\"}");
     }
 }

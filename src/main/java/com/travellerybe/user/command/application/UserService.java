@@ -2,28 +2,29 @@ package com.travellerybe.user.command.application;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.travellerybe.picture.exception.PictureException;
+import com.travellerybe.picture.query.repository.PictureRepository;
+import com.travellerybe.travel.query.repository.TravelRepository;
 import com.travellerybe.user.command.domain.User;
 import com.travellerybe.user.exception.AuthException;
-import com.travellerybe.user.query.dto.request.ModifyProfileReqDto;
 import com.travellerybe.user.query.dto.ProfileResDto;
 import com.travellerybe.user.query.dto.SignInResDto;
+import com.travellerybe.user.query.dto.request.ModifyProfileReqDto;
 import com.travellerybe.user.query.repository.UserRepository;
-import com.travellerybe.travel.exception.TravelException;
-import com.travellerybe.travel.query.repository.PictureRepository;
-import com.travellerybe.travel.query.repository.TravelRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import static com.travellerybe.picture.exception.PictureExceptionType.S3_UPLOAD_FAILED;
 import static com.travellerybe.user.exception.AuthExceptionType.DUPLICATED_USERNAME;
 import static com.travellerybe.user.exception.AuthExceptionType.NOT_FOUND_MEMBER;
-import static com.travellerybe.travel.exception.TravelExceptionType.S3_UPLOAD_FAILED;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +56,7 @@ public class UserService {
         );
     }
 
+    @Transactional
     public void modifyUserPicture(User user, MultipartFile file) {
         try {
             String fileName = file.getOriginalFilename();
@@ -66,11 +68,10 @@ public class UserService {
             String picturePath = URLDecoder.decode(amazonS3Client.getUrl(bucket, fileName).toString(), StandardCharsets.UTF_8);
             log.info("user profile picture path : {}", picturePath);
 
-            user.updateUserPicture(picturePath);
-            userRepository.save(user);
+            userRepository.updatePicture(user.getId(), picturePath);
 
         } catch (Exception e) {
-            throw new TravelException(S3_UPLOAD_FAILED);
+            throw new PictureException(S3_UPLOAD_FAILED);
         }
     }
 

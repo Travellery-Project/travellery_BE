@@ -1,12 +1,12 @@
-package com.travellerybe.travel.query.dto.request;
+package com.travellerybe.picture.query.dto.request;
 
 import com.travellerybe.travel.command.domain.LocationGroup;
-import com.travellerybe.travel.command.domain.Picture;
+import com.travellerybe.picture.command.domain.Picture;
 import com.travellerybe.user.command.domain.User;
 
 import java.util.Date;
 
-public record PictureDto(
+public record PictureReqDto(
         String path,
         Date date,
         String name,

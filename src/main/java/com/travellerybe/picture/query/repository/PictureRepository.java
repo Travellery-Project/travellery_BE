@@ -1,7 +1,7 @@
-package com.travellerybe.travel.query.repository;
+package com.travellerybe.picture.query.repository;
 
 import com.travellerybe.user.command.domain.User;
-import com.travellerybe.travel.command.domain.Picture;
+import com.travellerybe.picture.command.domain.Picture;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

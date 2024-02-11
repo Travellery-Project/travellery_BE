@@ -2,10 +2,12 @@ package com.travellerybe.travel.query.repository;
 
 import com.travellerybe.travel.command.domain.Destination;
 import com.travellerybe.travel.command.domain.Tag;
+import com.travellerybe.travel.query.dto.response.TravelWithUserLikesDto;
 import com.travellerybe.user.command.domain.User;
 import com.travellerybe.travel.command.domain.Travel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,10 +17,14 @@ import java.util.List;
 
 public interface TravelRepository extends JpaRepository<Travel, Long> {
 
+    @EntityGraph(attributePaths = {"destination"})
     Page<Travel> findAll(Pageable pageable);
     Page<Travel> findAllByUser(User user, Pageable pageable);
+
     Page<Travel> findAllByTagsContaining(Tag tag, Pageable pageable);
+
     Page<Travel> findAllByDestination(Destination destination, Pageable pageable);
+
     @Query("SELECT DISTINCT t FROM Travel t " +
             "LEFT JOIN t.destination d " +
             "LEFT JOIN t.tags tg " +

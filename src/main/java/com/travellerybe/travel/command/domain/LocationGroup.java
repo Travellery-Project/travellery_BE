@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.travellerybe.common.domain.BaseEntity;
+import com.travellerybe.picture.command.domain.Picture;
 import jakarta.persistence.*;
 import lombok.*;
 

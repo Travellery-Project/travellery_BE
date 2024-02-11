@@ -1,8 +1,9 @@
-package com.travellerybe.travel.command.domain;
+package com.travellerybe.picture.command.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.travellerybe.travel.command.domain.LocationGroup;
 import com.travellerybe.user.command.domain.User;
 import com.travellerybe.common.domain.BaseEntity;
 import jakarta.persistence.Entity;

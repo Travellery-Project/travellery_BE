@@ -1,5 +1,7 @@
 package com.travellerybe.travel.query.dto.request;
 
+import com.travellerybe.picture.query.dto.request.PictureReqDto;
+
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +10,7 @@ public record LocationGroupDto (
         String location,
         Date startDate,
         Date endDate,
-        List<PictureDto> pictures,
+        List<PictureReqDto> pictures,
         String description,
         Double longitude,
         Double latitude,

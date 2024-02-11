@@ -4,6 +4,7 @@ import com.travellerybe.like.command.domain.Likes;
 import com.travellerybe.like.query.repository.LikesRepository;
 import com.travellerybe.travel.command.domain.Travel;
 import com.travellerybe.travel.exception.TravelException;
+import com.travellerybe.travel.query.dto.response.TravelResDto;
 import com.travellerybe.travel.query.repository.TravelRepository;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.travellerybe.travel.exception.TravelExceptionType.NOT_FOUND_TRAVEL;
 
@@ -43,5 +46,11 @@ public class LikesService {
     @Transactional
     public void deleteLikes(User user, Long travelId) {
         likesRepository.deleteByUserAndTravelId(user, travelId);
+    }
+
+    public List<TravelResDto> getUserLikedTravel(User user, Pageable pageable) {
+        List<Likes> likesList = likesRepository.getAllByUser(user, pageable).getContent();
+
+        return likesList.stream().map(likes -> TravelResDto.fromTravel(likes.getTravel(), true)).toList();
     }
 }

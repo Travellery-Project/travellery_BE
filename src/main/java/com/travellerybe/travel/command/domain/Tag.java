@@ -21,6 +21,7 @@ import java.util.List;
 @JsonIgnoreProperties({"Travel"})
 public class Tag extends BaseEntity {
 
+    @Column(unique = true)
     private String name;
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
