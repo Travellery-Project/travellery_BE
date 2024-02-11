@@ -18,12 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +39,7 @@ public class TravelService {
     private final TagRepository tagsRepository;
     private final LocationGroupRepository locationGroupRepository;
     private final TravelRepository travelRepository;
+    private final RedisTemplate<String, List<TravelResDto>> redisTemplate;
 
     @Transactional
     public RegisterTravelResDto registerTravel(RegisterTravelDto registerTravelDto, User user) {
@@ -74,19 +77,32 @@ public class TravelService {
     @Cacheable("travelFeedLatest")
     public List<TravelResDto> getTravelFeed(Pageable pageable, User user) {
         long startTime = System.currentTimeMillis();
-        Page<Travel> travels = travelRepository.findAll(pageable);
 
-        if (user == null) {
-            List<TravelResDto> travelsDto =  travels.stream().map(travel ->
-                    TravelResDto.fromTravel(travel, false)).toList();
+        String feedCacheKey = "travelFeed:" + pageable.getPageNumber();
+
+        // 캐시 에서 데이터 조회
+        List<TravelResDto> cachedTravelFeed = redisTemplate.opsForValue().get(feedCacheKey);
+        if (cachedTravelFeed != null) {
             long endTime = System.currentTimeMillis();
             log.info("query execute time : {} ms", endTime - startTime);
-            return travelsDto;
+            return cachedTravelFeed;
         }
 
-        return travels.stream().map(travel ->
-                TravelResDto.fromTravel(travel, likesRepository.existsByUserAndTravel(user, travel))).toList();
+        Page<Travel> travels = travelRepository.findAll(pageable);
+        List<TravelResDto> travelsDto = travels.stream().map(travel ->
+                TravelResDto.fromTravel(travel, false)).toList();
 
+        long endTime = System.currentTimeMillis();
+
+        redisTemplate.opsForValue().set(feedCacheKey, travelsDto);
+        redisTemplate.expire(feedCacheKey, 1, TimeUnit.MINUTES);
+
+        log.info("query execute time : {} ms", endTime - startTime);
+
+        return travelsDto;
+
+//        return travels.stream().map(travel ->
+//                TravelResDto.fromTravel(travel, likesRepository.existsByUserAndTravel(user, travel))).toList();
     }
 
     public List<TravelResDto> getUserTravels(User user, Pageable pageable) {
