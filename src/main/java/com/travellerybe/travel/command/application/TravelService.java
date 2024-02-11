@@ -15,6 +15,7 @@ import com.travellerybe.travel.query.repository.TravelRepository;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -70,10 +71,10 @@ public class TravelService {
         return new RegisterTravelResDto(travel.getId());
     }
 
+    @Cacheable("travelFeedLatest")
     public List<TravelResDto> getTravelFeed(Pageable pageable, User user) {
         long startTime = System.currentTimeMillis();
         Page<Travel> travels = travelRepository.findAll(pageable);
-
 
         if (user == null) {
             List<TravelResDto> travelsDto =  travels.stream().map(travel ->
