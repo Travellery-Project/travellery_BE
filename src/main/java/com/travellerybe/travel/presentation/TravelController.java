@@ -33,9 +33,8 @@ public class TravelController {
 
     @GetMapping("/feed/latest")
     public ResponseEntity<FeedDto> getTravelFeed(@AuthenticationPrincipal User user,
-                                                 @SortDefault(sort = "createdDate", direction =
-                                                                        Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(travelService.getTravelFeed(pageable));
+                                                 @RequestParam(value = "cursor", required = false) Long cursor) {
+        return ResponseEntity.ok().body(travelService.getTravelFeed(cursor));
     }
 
     @GetMapping("/user")

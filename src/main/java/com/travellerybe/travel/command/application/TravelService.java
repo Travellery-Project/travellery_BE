@@ -17,8 +17,7 @@ import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,10 +72,12 @@ public class TravelService {
     }
 
     @Cacheable("travelFeedLatest")
-    public FeedDto getTravelFeed(Pageable pageable) {
+    public FeedDto getTravelFeed(Long cursor) {
         long startTime = System.currentTimeMillis();
 
-        Page<Travel> travels = travelRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
+        List<Travel> travels = getTravelsByCursor(cursor, pageable);
+
         List<TravelDto> travelsDto = travels.stream().map(travel ->
                 TravelDto.fromTravel(travel, false)).toList();
 
@@ -84,9 +85,6 @@ public class TravelService {
         log.info("query execute time : {} ms", endTime - startTime);
 
         return new FeedDto(travelsDto);
-
-//        return travels.stream().map(travel ->
-//                TravelResDto.fromTravel(travel, likesRepository.existsByUserAndTravel(user, travel))).toList();
     }
 
     public List<TravelDto> getUserTravels(User user, Pageable pageable) {
@@ -96,5 +94,12 @@ public class TravelService {
 
     public List<LocationGroup> getTravelDetails(Long travelId) {
         return locationGroupRepository.findAllByTravelId(travelId);
+    }
+
+    private List<Travel> getTravelsByCursor(Long cursor, Pageable pageable) {
+        if (cursor == null) {
+            return travelRepository.findAll(pageable).getContent();
+        }
+        return travelRepository.findByIdLessThan(cursor, pageable).getContent();
     }
 }

@@ -7,6 +7,7 @@ import com.travellerybe.user.command.domain.User;
 import com.travellerybe.travel.command.domain.Travel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,10 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
 
     @EntityGraph(attributePaths = {"destination"})
     Page<Travel> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"destination"})
+    Slice<Travel> findByIdLessThan(Long id, Pageable pageable);
+
     Page<Travel> findAllByUser(User user, Pageable pageable);
 
     Page<Travel> findAllByTagsContaining(Tag tag, Pageable pageable);
