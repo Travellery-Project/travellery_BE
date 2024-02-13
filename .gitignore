@@ -38,7 +38,5 @@ out/
 
 
 ### properties ###
-database.properties
-oauth.properties
-s3.properties
-src/main/resources/application.yml
+application.yml
+
