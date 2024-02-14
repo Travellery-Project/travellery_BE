@@ -71,7 +71,7 @@ public class TravelService {
         return new RegisterTravelResDto(travel.getId());
     }
 
-    @Cacheable("travelFeedLatest")
+//    @Cacheable("travelFeedLatest")
     public FeedDto getTravelFeed(Long cursor) {
         long startTime = System.currentTimeMillis();
 
