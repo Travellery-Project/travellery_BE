@@ -2,7 +2,7 @@ package com.travellerybe.user.command.application;
 
 
 import com.travellerybe.user.command.domain.User;
-import com.travellerybe.user.query.dto.SignInResDto;
+import com.travellerybe.user.query.dto.response.SignInResDto;
 import com.travellerybe.user.query.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

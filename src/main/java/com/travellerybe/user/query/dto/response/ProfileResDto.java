@@ -1,4 +1,4 @@
-package com.travellerybe.user.query.dto;
+package com.travellerybe.user.query.dto.response;
 
 public record ProfileResDto(
         Long id,

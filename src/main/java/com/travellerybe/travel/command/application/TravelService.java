@@ -16,12 +16,15 @@ import com.travellerybe.travel.query.repository.TravelRepository;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(readOnly = true)
 public class TravelService {
+    private final String CURSOR_LATEST = "latest";
     private final LikesRepository likesRepository;
 
     private final DestinationRepository destinationRepository;
@@ -39,6 +43,7 @@ public class TravelService {
     private final TravelRepository travelRepository;
 
     @Transactional
+    @CacheEvict(value = "travelFeedLatest", key = "'latest'")
     public RegisterTravelResDto registerTravel(RegisterTravelDto registerTravelDto, User user) {
 
         Set<Tag> tags = registerTravelDto.tags().stream().map(tagName ->
@@ -72,8 +77,9 @@ public class TravelService {
     }
 
     @Cacheable("travelFeedLatest")
-    public FeedDto getTravelFeed(Long cursor) {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
+    public FeedDto getTravelFeed(String cursor) {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+
         List<Travel> travels = getTravelsByCursor(cursor, pageable);
 
         List<TravelDto> travelsDto = travels.stream().map(travel ->
@@ -91,10 +97,10 @@ public class TravelService {
         return locationGroupRepository.findAllByTravelId(travelId);
     }
 
-    private List<Travel> getTravelsByCursor(Long cursor, Pageable pageable) {
-        if (cursor == null) {
+    private List<Travel> getTravelsByCursor(String cursor, Pageable pageable) {
+        if (Objects.equals(cursor, CURSOR_LATEST)) {
             return travelRepository.findAll(pageable).getContent();
         }
-        return travelRepository.findByIdLessThan(cursor, pageable).getContent();
+        return travelRepository.findByIdLessThan(Long.parseLong(cursor), pageable).getContent();
     }
 }

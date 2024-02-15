@@ -33,7 +33,7 @@ public class TravelController {
 
     @GetMapping("/feed/latest")
     public ResponseEntity<FeedDto> getTravelFeed(@AuthenticationPrincipal User user,
-                                                 @RequestParam(value = "cursor", required = false) Long cursor) {
+                                                 @RequestParam(value = "cursor", required = false) String cursor) {
         return ResponseEntity.ok().body(travelService.getTravelFeed(cursor));
     }
 

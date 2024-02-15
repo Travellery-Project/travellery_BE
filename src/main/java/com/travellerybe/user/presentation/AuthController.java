@@ -2,7 +2,7 @@ package com.travellerybe.user.presentation;
 
 import com.travellerybe.user.command.application.AuthService;
 import com.travellerybe.user.command.domain.User;
-import com.travellerybe.user.query.dto.SignInResDto;
+import com.travellerybe.user.query.dto.response.SignInResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

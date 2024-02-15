@@ -2,6 +2,7 @@ package com.travellerybe.travel.query.repository;
 
 import com.travellerybe.travel.command.domain.Destination;
 import com.travellerybe.travel.command.domain.Tag;
+import com.travellerybe.travel.query.dto.response.FirstTravelIdDto;
 import com.travellerybe.travel.query.dto.response.TravelWithUserLikesDto;
 import com.travellerybe.user.command.domain.User;
 import com.travellerybe.travel.command.domain.Travel;
@@ -23,6 +24,9 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
 
     @EntityGraph(attributePaths = {"destination"})
     Slice<Travel> findByIdLessThan(Long id, Pageable pageable);
+
+    @Query("SELECT t.id FROM Travel t ORDER BY t.id DESC LIMIT 1")
+    Long findFirst();
 
     Page<Travel> findAllByUser(User user, Pageable pageable);
 
