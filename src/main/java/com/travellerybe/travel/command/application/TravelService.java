@@ -71,7 +71,7 @@ public class TravelService {
         return new RegisterTravelResDto(travel.getId());
     }
 
-    @Cacheable("travelFeedLatest")
+//    @Cacheable("travelFeedLatest")
     public FeedDto getTravelFeed(Long cursor) {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
         List<Travel> travels = getTravelsByCursor(cursor, pageable);
