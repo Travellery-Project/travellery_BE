@@ -78,9 +78,7 @@ public class TravelService {
 
     @Cacheable("travelFeedLatest")
     public FeedDto getTravelFeed(String cursor) {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
-
-        List<Travel> travels = getTravelsByCursor(cursor, pageable);
+        List<Travel> travels = getTravelsByCursor(cursor);
 
         List<TravelDto> travelsDto = travels.stream().map(travel ->
                 TravelDto.fromTravel(travel, false)).toList();
@@ -97,7 +95,9 @@ public class TravelService {
         return locationGroupRepository.findAllByTravelId(travelId);
     }
 
-    private List<Travel> getTravelsByCursor(String cursor, Pageable pageable) {
+    private List<Travel> getTravelsByCursor(String cursor) {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+
         if (Objects.equals(cursor, CURSOR_LATEST)) {
             return travelRepository.findAll(pageable).getContent();
         }

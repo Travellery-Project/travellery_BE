@@ -11,6 +11,8 @@ public record TravelDto(
         LocalDateTime createdDate,
         String thumbnail,
         String title,
+        String username,
+        String userPicture,
         List<String> tags,
         String destination,
         Boolean likes
@@ -21,6 +23,8 @@ public record TravelDto(
                 travel.getCreatedDate(),
                 travel.getThumbnail(),
                 travel.getTitle(),
+                travel.getUser().getUsername(),
+                travel.getUser().getPicture(),
                 travel.getTags().stream().map(Tag::getName).toList(),
                 travel.getDestination().getName(),
                 likes

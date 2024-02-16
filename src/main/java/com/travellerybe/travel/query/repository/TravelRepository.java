@@ -22,7 +22,7 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
     @EntityGraph(attributePaths = {"destination"})
     Page<Travel> findAll(Pageable pageable);
 
-    @EntityGraph(attributePaths = {"destination"})
+    @EntityGraph(attributePaths = {"destination", "user"})
     Slice<Travel> findByIdLessThan(Long id, Pageable pageable);
 
     @Query("SELECT t.id FROM Travel t ORDER BY t.id DESC LIMIT 1")

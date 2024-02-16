@@ -1,6 +1,7 @@
 package com.travellerybe.common.auth;
 
 import com.google.firebase.auth.FirebaseToken;
+import com.travellerybe.common.auth.domain.FirebaseTokenClaim;
 import com.travellerybe.user.command.domain.User;
 import com.travellerybe.user.query.repository.UserRepository;
 import com.travellerybe.user.exception.AuthException;
@@ -28,11 +29,11 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     @Transactional
-    public User registerNewUser(FirebaseToken decodedToken) {
+    public User registerNewUser(FirebaseTokenClaim firebaseTokenClaim) {
         return userRepository.save(User.builder()
-                        .username(decodedToken.getName())
-                        .email(decodedToken.getEmail())
-                        .picture(decodedToken.getPicture())
+                        .username(firebaseTokenClaim.name())
+                        .email(firebaseTokenClaim.email())
+                        .picture(firebaseTokenClaim.picture())
                 .build());
     }
 }
