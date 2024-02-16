@@ -1,14 +1,13 @@
 package com.travellerybe.travel.command.application;
 
 import com.travellerybe.like.query.repository.LikesRepository;
+import com.travellerybe.picture.query.dto.response.PictureResDto;
 import com.travellerybe.travel.command.domain.Destination;
 import com.travellerybe.travel.command.domain.LocationGroup;
 import com.travellerybe.travel.command.domain.Tag;
 import com.travellerybe.travel.command.domain.Travel;
 import com.travellerybe.travel.query.dto.request.RegisterTravelDto;
-import com.travellerybe.travel.query.dto.response.FeedDto;
-import com.travellerybe.travel.query.dto.response.RegisterTravelResDto;
-import com.travellerybe.travel.query.dto.response.TravelDto;
+import com.travellerybe.travel.query.dto.response.*;
 import com.travellerybe.travel.query.repository.DestinationRepository;
 import com.travellerybe.travel.query.repository.LocationGroupRepository;
 import com.travellerybe.travel.query.repository.TagRepository;
@@ -17,7 +16,6 @@ import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -91,8 +89,19 @@ public class TravelService {
         return travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
     }
 
-    public List<LocationGroup> getTravelDetails(Long travelId) {
-        return locationGroupRepository.findAllByTravelId(travelId);
+    public TravelDetailResDto getTravelDetails(User user, Long travelId) {
+        boolean isLiked = false;
+
+        List<LocationGroup> locationGroups = locationGroupRepository.findAllByTravelId(travelId);
+        List<LocationGroupResDto> dtos =
+                locationGroups.stream().map(locationGroup -> LocationGroupResDto.fromLocationGroup(locationGroup,
+                locationGroup.getPictures().stream().map(PictureResDto::fromPicture).toList())).toList();
+
+        if (user != null) {
+            isLiked = likesRepository.existsByUserAndTravelId(user, travelId);
+        }
+
+        return new TravelDetailResDto(dtos, isLiked);
     }
 
     private List<Travel> getTravelsByCursor(String cursor) {

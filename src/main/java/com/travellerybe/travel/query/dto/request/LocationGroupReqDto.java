@@ -5,7 +5,7 @@ import com.travellerybe.picture.query.dto.request.PictureReqDto;
 import java.util.Date;
 import java.util.List;
 
-public record LocationGroupDto (
+public record LocationGroupReqDto(
         String address,
         String location,
         Date startDate,

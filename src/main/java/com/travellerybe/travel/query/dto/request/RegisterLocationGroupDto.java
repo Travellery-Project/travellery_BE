@@ -5,7 +5,7 @@ import com.travellerybe.travel.command.domain.Travel;
 
 public record RegisterLocationGroupDto(
         Long travelId,
-        LocationGroupDto locationGroup
+        LocationGroupReqDto locationGroup
 ) {
     public LocationGroup toEntityWithTravel(Travel travel) {
         return LocationGroup.builder()

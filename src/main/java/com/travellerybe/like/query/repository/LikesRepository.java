@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LikesRepository extends JpaRepository<Likes, Long> {
     Page<Likes> getAllByUser(User user, Pageable pageable);
     void deleteByUserAndTravelId(User user, Long travelId);
-    boolean existsByUserAndTravel(User user, Travel travel);
+    boolean existsByUserAndTravelId(User user, Long travelId);
 
 }

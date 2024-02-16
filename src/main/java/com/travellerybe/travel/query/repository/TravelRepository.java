@@ -2,8 +2,6 @@ package com.travellerybe.travel.query.repository;
 
 import com.travellerybe.travel.command.domain.Destination;
 import com.travellerybe.travel.command.domain.Tag;
-import com.travellerybe.travel.query.dto.response.FirstTravelIdDto;
-import com.travellerybe.travel.query.dto.response.TravelWithUserLikesDto;
 import com.travellerybe.user.command.domain.User;
 import com.travellerybe.travel.command.domain.Travel;
 import org.springframework.data.domain.Page;

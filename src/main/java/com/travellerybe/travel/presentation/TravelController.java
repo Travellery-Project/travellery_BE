@@ -1,12 +1,9 @@
 package com.travellerybe.travel.presentation;
 
-import com.travellerybe.travel.query.dto.response.FeedDto;
-import com.travellerybe.user.command.domain.User;
 import com.travellerybe.travel.command.application.TravelService;
-import com.travellerybe.travel.command.domain.LocationGroup;
 import com.travellerybe.travel.query.dto.request.RegisterTravelDto;
-import com.travellerybe.travel.query.dto.response.RegisterTravelResDto;
-import com.travellerybe.travel.query.dto.response.TravelDto;
+import com.travellerybe.travel.query.dto.response.*;
+import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -40,13 +37,14 @@ public class TravelController {
     @GetMapping("/user")
     public ResponseEntity<List<TravelDto>> getUserTravelFeed(@AuthenticationPrincipal User user,
                                                              @SortDefault(sort = "createdDate", direction =
-                                                                            Sort.Direction.DESC) Pageable pageable) {
+                                                                     Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(travelService.getUserTravels(user, pageable));
     }
 
     @GetMapping("/detail/{travelId}")
-    public ResponseEntity<List<LocationGroup>> getTravelDetails(@PathVariable("travelId") Long travelId) {
+    public ResponseEntity<TravelDetailResDto> getTravelDetails(@AuthenticationPrincipal User user,
+                                                               @PathVariable("travelId") Long travelId) {
         log.info(String.valueOf(travelId));
-        return ResponseEntity.ok().body(travelService.getTravelDetails(travelId));
+        return ResponseEntity.ok().body(travelService.getTravelDetails(user, travelId));
     }
 }
