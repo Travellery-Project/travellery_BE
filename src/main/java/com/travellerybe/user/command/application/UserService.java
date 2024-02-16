@@ -75,6 +75,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public SignInResDto modifyUserProfile(User user, ModifyProfileReqDto modifyProfileReqDto) {
         if (!Objects.equals(user.getUsername(), modifyProfileReqDto.username())) {
             validateUsername(modifyProfileReqDto.username());
