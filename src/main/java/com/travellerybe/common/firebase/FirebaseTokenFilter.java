@@ -3,9 +3,8 @@ package com.travellerybe.common.firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.travellerybe.common.auth.domain.FirebaseTokenClaim;
-import com.travellerybe.user.exception.AuthException;
 import com.travellerybe.common.auth.CustomUserDetailService;
+import com.travellerybe.common.auth.domain.FirebaseTokenClaim;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +44,6 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
         String idToken = header.substring(7);
         FirebaseTokenClaim firebaseTokenClaim = (FirebaseTokenClaim) redisTemplate.opsForValue().get(idToken);
         if (firebaseTokenClaim == null) {
-            log.info("verifying");
             try {
                 FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
                 firebaseTokenClaim = FirebaseTokenClaim.fromFirebaseToken(decodedToken);
@@ -58,19 +56,11 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
             }
         }
 
-        try {
-            UserDetails user = customUserDetailService.loadUserByUsername(firebaseTokenClaim.email());
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails user = customUserDetailService.loadUserByUsername(firebaseTokenClaim.email());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } catch (AuthException e) {
-            UserDetails user = customUserDetailService.registerNewUser(firebaseTokenClaim);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        }
         filterChain.doFilter(request, response);
     }
 

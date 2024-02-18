@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 .requestMatchers("/travel/feed/latest").permitAll()
                                 .requestMatchers("/travel/detail/**").permitAll()
                                 .requestMatchers("/search/**").permitAll()
+                                .requestMatchers("/auth/sign-in/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(firebaseTokenFilter, UsernamePasswordAuthenticationFilter.class);
