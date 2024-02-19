@@ -18,6 +18,7 @@ import com.travellerybe.user.exception.AuthException;
 import com.travellerybe.user.query.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -69,6 +70,7 @@ public class SearchService {
         searchHistoryRepository.deleteAll(searchHistories);
     }
 
+    @Cacheable("autoCompletion")
     public AutoCompletionResDto autoCompletion(String keyword) {
         List<User> userList = userRepository.findFirst10ByUsernameContaining(keyword);
         List<Tag> tagList = tagsRepository.findFirst10ByNameContaining(keyword);
