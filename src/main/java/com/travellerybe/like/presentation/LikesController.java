@@ -1,6 +1,7 @@
 package com.travellerybe.like.presentation;
 
-import com.travellerybe.travel.query.dto.response.TravelDto;
+import com.travellerybe.travel.command.dto.domain.FeedDto;
+import com.travellerybe.travel.command.dto.response.FeedResDto;
 import com.travellerybe.user.command.domain.User;
 import com.travellerybe.like.command.application.LikesService;
 import com.travellerybe.like.command.domain.Likes;
@@ -42,8 +43,8 @@ public class LikesController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<TravelDto>> getUserLikedTravel(@AuthenticationPrincipal User user,
-                                                              @SortDefault(sort = "createdDate", direction =
+    public ResponseEntity<FeedResDto> getUserLikedTravel(@AuthenticationPrincipal User user,
+                                                         @SortDefault(sort = "createdDate", direction =
                                                                          Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(likesService.getUserLikedTravel(user, pageable));
     }

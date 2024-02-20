@@ -5,10 +5,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.travellerybe.user.command.domain.User;
+import com.travellerybe.user.command.dto.domain.UserDto;
+import com.travellerybe.user.command.dto.domain.mapper.UserMapper;
 import com.travellerybe.user.exception.AuthException;
-import com.travellerybe.user.query.dto.request.IdTokenDto;
-import com.travellerybe.user.query.dto.response.SignInResDto;
-import com.travellerybe.user.query.repository.UserRepository;
+import com.travellerybe.user.command.dto.request.IdTokenDto;
+import com.travellerybe.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,10 @@ public class AuthService {
 
     private final FirebaseAuth firebaseAuth;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Transactional
-    public SignInResDto signIn(IdTokenDto idToken) throws FirebaseAuthException {
+    public UserDto signIn(IdTokenDto idToken) throws FirebaseAuthException {
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken.idToken());
         String email = decodedToken.getEmail();
 
@@ -41,18 +43,10 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AuthException(NOT_FOUND_MEMBER));
 
-        return new SignInResDto(
-                user.getId(),
-                user.getEmail(),
-                user.getUsername(),
-                user.getPicture(),
-                user.getDescription()
-        );
-
-
+        return userMapper.toUserDto(user);
     }
 
-    protected void registerUser(FirebaseToken decodedToken) {
+    private void registerUser(FirebaseToken decodedToken) {
         String username = generateUsernameWithRandomTag(decodedToken.getName());
 
         userRepository.save(User.builder()
@@ -63,7 +57,6 @@ public class AuthService {
     }
 
     private String generateUsernameWithRandomTag(String name) {
-
         StringBuilder randomString = new StringBuilder(LENGTH);
 
         while (true) {

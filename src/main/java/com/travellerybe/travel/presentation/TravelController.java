@@ -1,8 +1,11 @@
 package com.travellerybe.travel.presentation;
 
 import com.travellerybe.travel.command.application.TravelService;
-import com.travellerybe.travel.query.dto.request.RegisterTravelDto;
-import com.travellerybe.travel.query.dto.response.*;
+import com.travellerybe.travel.command.dto.request.RegisterTravelDto;
+import com.travellerybe.travel.command.dto.response.FeedResDto;
+import com.travellerybe.travel.command.dto.response.RegisterTravelResDto;
+import com.travellerybe.travel.command.dto.response.TravelDetailResDto;
+import com.travellerybe.travel.command.dto.domain.FeedDto;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +32,13 @@ public class TravelController {
     }
 
     @GetMapping("/feed/latest")
-    public ResponseEntity<FeedDto> getTravelFeed(@AuthenticationPrincipal User user,
-                                                 @RequestParam(value = "cursor", required = false) String cursor) {
+    public ResponseEntity<FeedResDto> getTravelFeed(@RequestParam(value = "cursor", required = false) String cursor) {
         return ResponseEntity.ok().body(travelService.getTravelFeed(cursor));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<TravelDto>> getUserTravelFeed(@AuthenticationPrincipal User user,
-                                                             @SortDefault(sort = "createdDate", direction =
+    public ResponseEntity<List<FeedDto>> getUserTravelFeed(@AuthenticationPrincipal User user,
+                                                           @SortDefault(sort = "createdDate", direction =
                                                                      Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(travelService.getUserTravels(user, pageable));
     }

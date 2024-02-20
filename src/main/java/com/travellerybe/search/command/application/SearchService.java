@@ -1,21 +1,27 @@
 package com.travellerybe.search.command.application;
 
+import com.travellerybe.search.command.domain.AutoCompletionType;
 import com.travellerybe.search.command.domain.SearchHistory;
+import com.travellerybe.search.command.dto.domain.mapper.SearchHistoryMapper;
+import com.travellerybe.search.command.dto.request.DeleteSearchHistoryReqDto;
+import com.travellerybe.search.command.dto.response.*;
 import com.travellerybe.search.exception.SearchException;
-import com.travellerybe.search.query.dto.request.DeleteSearchHistoryReqDto;
-import com.travellerybe.search.query.dto.response.*;
-import com.travellerybe.search.query.repository.SearchHistoryRepository;
+import com.travellerybe.search.repository.SearchHistoryRepository;
 import com.travellerybe.travel.command.domain.Destination;
 import com.travellerybe.travel.command.domain.Tag;
 import com.travellerybe.travel.command.domain.Travel;
+import com.travellerybe.travel.command.dto.domain.FeedDto;
+import com.travellerybe.travel.command.dto.domain.mapper.DestinationMapper;
+import com.travellerybe.travel.command.dto.domain.mapper.TagMapper;
+import com.travellerybe.travel.command.dto.domain.mapper.TravelMapper;
 import com.travellerybe.travel.exception.TravelException;
-import com.travellerybe.travel.query.dto.response.TravelDto;
-import com.travellerybe.travel.query.repository.DestinationRepository;
-import com.travellerybe.travel.query.repository.TagRepository;
-import com.travellerybe.travel.query.repository.TravelRepository;
+import com.travellerybe.travel.repository.DestinationRepository;
+import com.travellerybe.travel.repository.TagRepository;
+import com.travellerybe.travel.repository.TravelRepository;
 import com.travellerybe.user.command.domain.User;
+import com.travellerybe.user.command.dto.domain.mapper.UserMapper;
 import com.travellerybe.user.exception.AuthException;
-import com.travellerybe.user.query.repository.UserRepository;
+import com.travellerybe.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,6 +38,7 @@ import static com.travellerybe.search.exception.SearchExceptionType.NOT_FOUND_SE
 import static com.travellerybe.travel.exception.TravelExceptionType.NOT_FOUND_DESTINATION;
 import static com.travellerybe.travel.exception.TravelExceptionType.NOT_FOUND_TAG;
 import static com.travellerybe.user.exception.AuthExceptionType.NOT_FOUND_MEMBER;
+import static com.travellerybe.user.exception.AuthExceptionType.UNAUTHORIZED_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -48,19 +55,23 @@ public class SearchService {
     private final TagRepository tagsRepository;
     private final DestinationRepository destinationRepository;
     private final TravelRepository travelRepository;
+    private final TravelMapper travelMapper;
+    private final UserMapper userMapper;
+    private final TagMapper tagMapper;
+    private final DestinationMapper destinationMapper;
+    private final SearchHistoryMapper searchHistoryMapper;
 
-    public List<SearchHistoryResDto> getSearchHistory(User user) {
-        ;
+    public SearchHistoryResDto getSearchHistory(User user) {
         List<SearchHistory> searchHistories = searchHistoryRepository.findByUserOrderByCreatedDateDesc(user);
-        return searchHistories.stream().map(searchHistory -> new SearchHistoryResDto(searchHistory.getId(),
-                searchHistory.getKeyword())).toList();
+        return new SearchHistoryResDto(searchHistories.stream().map(searchHistoryMapper::toSearchHistoryDto).toList());
     }
 
     @Transactional
     public void deleteSearchHistoryOne(User user, DeleteSearchHistoryReqDto deleteSearchHistoryReqDto) {
         SearchHistory recentHistory = searchHistoryRepository.findById(deleteSearchHistoryReqDto.searchHistoryId())
                 .orElseThrow(() -> new SearchException(NOT_FOUND_SEARCH_HISTORY));
-//        if (recentHistory.getUser() != user) throw new SearchException(NO_AUTHORITY);
+
+        if (recentHistory.getUser() != user) throw new AuthException(UNAUTHORIZED_REQUEST);
         searchHistoryRepository.delete(recentHistory);
     }
 
@@ -72,16 +83,18 @@ public class SearchService {
 
     @Cacheable("autoCompletion")
     public AutoCompletionResDto autoCompletion(String keyword) {
-        List<User> userList = userRepository.findFirst10ByUsernameContaining(keyword);
-        List<Tag> tagList = tagsRepository.findFirst10ByNameContaining(keyword);
-        List<Destination> destinationList = destinationRepository.findFirst10ByNameContaining(keyword);
+        List<User> users = userRepository.findFirst10ByUsernameContaining(keyword);
+        List<Tag> tags = tagsRepository.findFirst10ByNameContaining(keyword);
+        List<Destination> destinations = destinationRepository.findFirst10ByNameContaining(keyword);
 
-        List<AutoCompletionByUser> users = userList.stream().map(AutoCompletionByUser::fromUser).toList();
-        List<AutoCompletionByTag> tags = tagList.stream().map(AutoCompletionByTag::fromTag).toList();
-        List<AutoCompletionByDestination> destinations = destinationList.stream()
-                .map(AutoCompletionByDestination::fromDestination).toList();
+        List<AutoComUserDto> autoComUsers = users.stream().map(
+                user -> userMapper.toAutoComUserDto(user, AutoCompletionType.USER)).toList();
+        List<AutoComTagDto> autoComTags = tags.stream().map(
+                tag -> tagMapper.toAutoComTagDto(tag, AutoCompletionType.TAG)).toList();
+        List<AutoComDestinationDto> autoComDestinations = destinations.stream().map(
+                destination -> destinationMapper.AutoCompDestinationDto(destination, AutoCompletionType.DESTINATION)).toList();
 
-        return new AutoCompletionResDto(users, tags, destinations);
+        return new AutoCompletionResDto(autoComUsers, autoComTags, autoComDestinations);
     }
 
     @Transactional
@@ -91,7 +104,7 @@ public class SearchService {
                 () -> new AuthException(NOT_FOUND_MEMBER));
         Page<Travel> travels = travelRepository.findAllByUser(traveler, pageable);
 
-        List<TravelDto> travelRes = travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
+        List<FeedDto> travelRes = travels.stream().map(travelMapper::toFeedDto).toList();
         return new SearchResDto(travelRes, travels.getTotalElements());
     }
 
@@ -102,7 +115,7 @@ public class SearchService {
                 () -> new TravelException(NOT_FOUND_TAG));
         Page<Travel> travels = travelRepository.findAllByTagsContaining(tag, pageable);
 
-        List<TravelDto> travelRes = travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
+        List<FeedDto> travelRes = travels.stream().map(travelMapper::toFeedDto).toList();
         return new SearchResDto(travelRes, travels.getTotalElements());
     }
 
@@ -113,7 +126,7 @@ public class SearchService {
                 () -> new TravelException(NOT_FOUND_DESTINATION));
         Page<Travel> travels = travelRepository.findAllByDestination(destination, pageable);
 
-        List<TravelDto> travelRes = travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
+        List<FeedDto> travelRes = travels.stream().map(travelMapper::toFeedDto).toList();
         return new SearchResDto(travelRes, travels.getTotalElements());
     }
 
@@ -121,23 +134,22 @@ public class SearchService {
     public SearchResDto search(User user, String keyword, Pageable pageable) {
         saveHistory(user, keyword);
         Page<Travel> travels = travelRepository.findAllByKeyword(keyword, pageable);
-        List<TravelDto> travelRes = travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
+        List<FeedDto> travelRes = travels.stream().map(travelMapper::toFeedDto).toList();
         return new SearchResDto(travelRes, travels.getTotalElements());
     }
 
-    public List<PopularTravelerResDto> getPopularTraveler() {
+    public PopularTravelerResDto getPopularTraveler() {
         Pageable pageable = PageRequest.of(0, 5);
         List<User> userRank = travelRepository.findUserRankings(WEEK_AGO, pageable);
 
-        return userRank.stream().map(user -> new PopularTravelerResDto(user.getUsername(), user.getPicture())).toList();
+        return new PopularTravelerResDto(userRank.stream().map(userMapper::toPopularTravelerDto).toList());
     }
 
-    public List<PopularDestinationResDto> getPopularDestination() {
+    public PopularDestinationResDto getPopularDestination() {
         Pageable pageable = PageRequest.of(0, 5);
         List<Destination> destinations = travelRepository.findDestinationRankings(WEEK_AGO, pageable);
 
-        return destinations.stream().map(destination -> new PopularDestinationResDto(destination.getName(),
-                destination.getPicture())).toList();
+        return new PopularDestinationResDto(destinations.stream().map(destinationMapper::toPopularDestinationDto).toList());
     }
 
     private void saveHistory(User user, String keyword) {

@@ -1,9 +1,8 @@
 package com.travellerybe.common.auth;
 
-import com.google.firebase.auth.FirebaseToken;
 import com.travellerybe.common.auth.domain.FirebaseTokenClaim;
 import com.travellerybe.user.command.domain.User;
-import com.travellerybe.user.query.repository.UserRepository;
+import com.travellerybe.user.repository.UserRepository;
 import com.travellerybe.user.exception.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

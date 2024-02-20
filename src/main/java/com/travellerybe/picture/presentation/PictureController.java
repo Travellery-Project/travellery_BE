@@ -1,7 +1,7 @@
 package com.travellerybe.picture.presentation;
 
 import com.travellerybe.picture.command.application.PictureService;
-import com.travellerybe.picture.query.dto.response.PictureResDto;
+import com.travellerybe.picture.query.dto.response.PictureDto;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +26,8 @@ public class PictureController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<PictureResDto>> getUserPictures(@AuthenticationPrincipal User user,
-                                                               @SortDefault(sort = "createdDate", direction =
+    public ResponseEntity<List<PictureDto>> getUserPictures(@AuthenticationPrincipal User user,
+                                                            @SortDefault(sort = "createdDate", direction =
                                                                        Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(pictureService.getUserPictures(user, pageable));
     }

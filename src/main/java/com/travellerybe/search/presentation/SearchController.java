@@ -1,12 +1,12 @@
 package com.travellerybe.search.presentation;
 
 import com.travellerybe.search.command.application.SearchService;
-import com.travellerybe.search.query.dto.request.DeleteSearchHistoryReqDto;
-import com.travellerybe.search.query.dto.response.*;
+import com.travellerybe.search.command.dto.response.SearchResDto;
+import com.travellerybe.search.command.dto.request.DeleteSearchHistoryReqDto;
+import com.travellerybe.search.command.dto.response.*;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -25,7 +25,7 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/history")
-    public ResponseEntity<List<SearchHistoryResDto>> getSearchHistory(@AuthenticationPrincipal User user) {
+    public ResponseEntity<SearchHistoryResDto> getSearchHistory(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok().body(searchService.getSearchHistory(user));
     }
 
@@ -80,12 +80,12 @@ public class SearchController {
     }
 
     @GetMapping("/traveler/popular")
-    public ResponseEntity<List<PopularTravelerResDto>> getPopularTraveler() {
+    public ResponseEntity<PopularTravelerResDto> getPopularTraveler() {
         return ResponseEntity.ok().body(searchService.getPopularTraveler());
     }
 
     @GetMapping("/destination/popular")
-    public ResponseEntity<List<PopularDestinationResDto>> getPopularDestination() {
+    public ResponseEntity<PopularDestinationResDto> getPopularDestination() {
         return ResponseEntity.ok().body(searchService.getPopularDestination());
     }
 }

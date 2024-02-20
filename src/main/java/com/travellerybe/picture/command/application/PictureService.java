@@ -4,8 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.travellerybe.picture.command.domain.Picture;
 import com.travellerybe.picture.exception.PictureException;
-import com.travellerybe.travel.exception.TravelException;
-import com.travellerybe.picture.query.dto.response.PictureResDto;
+import com.travellerybe.picture.query.dto.response.PictureDto;
 import com.travellerybe.picture.query.repository.PictureRepository;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +54,9 @@ public class PictureService {
         }
     }
 
-    public List<PictureResDto> getUserPictures(User user, Pageable pageable) {
+    public List<PictureDto> getUserPictures(User user, Pageable pageable) {
         List<Picture> pictures = pictureRepository.findAllByUser(user, pageable).getContent();
-        return pictures.stream().map(picture -> new PictureResDto(
+        return pictures.stream().map(picture -> new PictureDto(
                 picture.getId(),
                 picture.getPath(),
                 picture.getDate(),

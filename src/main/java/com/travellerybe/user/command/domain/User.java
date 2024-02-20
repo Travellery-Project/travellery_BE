@@ -1,6 +1,5 @@
 package com.travellerybe.user.command.domain;
 
-import com.travellerybe.user.query.dto.request.ModifyProfileReqDto;
 import com.travellerybe.common.auth.domain.Authority;
 import com.travellerybe.travel.command.domain.Travel;
 import jakarta.persistence.*;
@@ -54,15 +53,6 @@ public class User implements UserDetails {
 
     public void initializeTravels() {
         this.travels = new ArrayList<>();
-    }
-
-    public void updateUserProfile(ModifyProfileReqDto modifyProfileReqDto) {
-        this.username = modifyProfileReqDto.username();
-        this.description = modifyProfileReqDto.description();
-    }
-
-    public void updateUserPicture(String picture) {
-        this.picture = picture;
     }
 }
 

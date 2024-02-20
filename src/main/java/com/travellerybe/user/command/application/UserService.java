@@ -4,13 +4,14 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.travellerybe.picture.exception.PictureException;
 import com.travellerybe.picture.query.repository.PictureRepository;
-import com.travellerybe.travel.query.repository.TravelRepository;
+import com.travellerybe.travel.repository.TravelRepository;
 import com.travellerybe.user.command.domain.User;
+import com.travellerybe.user.command.dto.domain.UserDto;
+import com.travellerybe.user.command.dto.domain.mapper.UserMapper;
 import com.travellerybe.user.exception.AuthException;
-import com.travellerybe.user.query.dto.response.ProfileResDto;
-import com.travellerybe.user.query.dto.response.SignInResDto;
-import com.travellerybe.user.query.dto.request.ModifyProfileReqDto;
-import com.travellerybe.user.query.repository.UserRepository;
+import com.travellerybe.user.command.dto.domain.ProfileDto;
+import com.travellerybe.user.command.dto.request.ModifyProfileReqDto;
+import com.travellerybe.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,30 +31,20 @@ import static com.travellerybe.user.exception.AuthExceptionType.NOT_FOUND_MEMBER
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private final PictureRepository pictureRepository;
-    private final TravelRepository travelRepository;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    private final PictureRepository pictureRepository;
+    private final TravelRepository travelRepository;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final AmazonS3Client amazonS3Client;
 
-    public ProfileResDto getUserProfile(User user) {
-        User userProfile = userRepository.findByEmail(user.getEmail())
-                .orElseThrow(() -> new AuthException(NOT_FOUND_MEMBER));
-
+    public ProfileDto getUserProfile(User user) {
         int travelCount = travelRepository.countByUser(user);
         int pictureCount = pictureRepository.countByUser(user);
 
-        return new ProfileResDto(
-                userProfile.getId(),
-                userProfile.getEmail(),
-                userProfile.getUsername(),
-                userProfile.getPicture(),
-                userProfile.getDescription(),
-                travelCount,
-                pictureCount
-        );
+        return userMapper.toProfileDto(user, travelCount, pictureCount);
     }
 
     @Transactional
@@ -66,7 +57,6 @@ public class UserService {
             metadata.setContentLength(file.getSize());
             amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
             String picturePath = URLDecoder.decode(amazonS3Client.getUrl(bucket, fileName).toString(), StandardCharsets.UTF_8);
-            log.info("user profile picture path : {}", picturePath);
 
             userRepository.updatePicture(user.getId(), picturePath);
 
@@ -76,18 +66,16 @@ public class UserService {
     }
 
     @Transactional
-    public SignInResDto modifyUserProfile(User user, ModifyProfileReqDto modifyProfileReqDto) {
+    public UserDto modifyUserProfile(User user, ModifyProfileReqDto modifyProfileReqDto) {
         if (!Objects.equals(user.getUsername(), modifyProfileReqDto.username())) {
             validateUsername(modifyProfileReqDto.username());
         }
+        userRepository.updateUserProfile(user.getId(), modifyProfileReqDto.description(),
+                modifyProfileReqDto.username());
+        User updatedUser = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new AuthException(NOT_FOUND_MEMBER));
 
-        user.updateUserProfile(modifyProfileReqDto);
-        User updatedUser = userRepository.save(user);
-        return new SignInResDto(updatedUser.getId(),
-                updatedUser.getEmail(),
-                updatedUser.getUsername(),
-                updatedUser.getPicture(),
-                updatedUser.getDescription());
+        return userMapper.toUserDto(updatedUser);
     }
 
     private void validateUsername(String username) {

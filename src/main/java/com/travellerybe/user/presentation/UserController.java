@@ -2,10 +2,9 @@ package com.travellerybe.user.presentation;
 
 import com.travellerybe.user.command.application.UserService;
 import com.travellerybe.user.command.domain.User;
-import com.travellerybe.user.query.dto.request.ModifyProfileReqDto;
-import com.travellerybe.user.query.dto.response.ProfileResDto;
-import com.travellerybe.user.query.dto.response.SignInResDto;
-import com.travellerybe.user.query.repository.UserRepository;
+import com.travellerybe.user.command.dto.domain.UserDto;
+import com.travellerybe.user.command.dto.request.ModifyProfileReqDto;
+import com.travellerybe.user.command.dto.domain.ProfileDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,26 +18,24 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private final UserRepository userRepository;
 
     @GetMapping("/profile")
-    public ResponseEntity<ProfileResDto> getUserProfile(@AuthenticationPrincipal User user) {
+    public ResponseEntity<ProfileDto> getUserProfile(@AuthenticationPrincipal User user) {
 
-        return ResponseEntity.ok().body(
-                userService.getUserProfile(user)
-        );
+        return ResponseEntity.ok().body(userService.getUserProfile(user));
     }
 
     @PostMapping("/modify/picture")
-    public void modifyPicture(@AuthenticationPrincipal User user,
+    public ResponseEntity<Object> modifyPicture(@AuthenticationPrincipal User user,
                               @RequestParam(value = "file") MultipartFile[] file) {
         MultipartFile newFile = file[0];
         userService.modifyUserPicture(user, newFile);
+        return ResponseEntity.ok().body("프로필 이미지 변경에 성공하였습니다.");
     }
 
     @PostMapping("/modify/profile")
-    public ResponseEntity<SignInResDto> modifyUserProfile(@AuthenticationPrincipal User user,
-                                                          @RequestBody ModifyProfileReqDto modifyProfileReqDto) {
+    public ResponseEntity<UserDto> modifyUserProfile(@AuthenticationPrincipal User user,
+                                                     @RequestBody ModifyProfileReqDto modifyProfileReqDto) {
 
         return ResponseEntity.ok().body(userService.modifyUserProfile(user, modifyProfileReqDto));
     }

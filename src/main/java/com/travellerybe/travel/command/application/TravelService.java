@@ -1,23 +1,31 @@
 package com.travellerybe.travel.command.application;
 
 import com.travellerybe.like.query.repository.LikesRepository;
-import com.travellerybe.picture.query.dto.response.PictureResDto;
+import com.travellerybe.picture.command.dto.domain.mapper.PictureMapper;
 import com.travellerybe.travel.command.domain.Destination;
 import com.travellerybe.travel.command.domain.LocationGroup;
 import com.travellerybe.travel.command.domain.Tag;
 import com.travellerybe.travel.command.domain.Travel;
-import com.travellerybe.travel.query.dto.request.RegisterTravelDto;
-import com.travellerybe.travel.query.dto.response.*;
-import com.travellerybe.travel.query.repository.DestinationRepository;
-import com.travellerybe.travel.query.repository.LocationGroupRepository;
-import com.travellerybe.travel.query.repository.TagRepository;
-import com.travellerybe.travel.query.repository.TravelRepository;
+import com.travellerybe.travel.command.dto.domain.FeedDto;
+import com.travellerybe.travel.command.dto.domain.TravelDetailDto;
+import com.travellerybe.travel.command.dto.domain.mapper.LocationGroupMapper;
+import com.travellerybe.travel.command.dto.domain.mapper.TravelMapper;
+import com.travellerybe.travel.command.dto.request.RegisterTravelDto;
+import com.travellerybe.travel.command.dto.response.FeedResDto;
+import com.travellerybe.travel.command.dto.response.RegisterTravelResDto;
+import com.travellerybe.travel.command.dto.response.TravelDetailResDto;
+import com.travellerybe.travel.repository.DestinationRepository;
+import com.travellerybe.travel.repository.LocationGroupRepository;
+import com.travellerybe.travel.repository.TagRepository;
+import com.travellerybe.travel.repository.TravelRepository;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +47,9 @@ public class TravelService {
     private final TagRepository tagsRepository;
     private final LocationGroupRepository locationGroupRepository;
     private final TravelRepository travelRepository;
+    private final TravelMapper travelMapper;
+    private final LocationGroupMapper locationGroupMapper;
+    private final PictureMapper pictureMapper;
 
     @Transactional
     @CacheEvict(value = "travelFeedLatest", key = "'latest'")
@@ -46,62 +57,55 @@ public class TravelService {
 
         Set<Tag> tags = registerTravelDto.tags().stream().map(tagName ->
                 tagsRepository.findByName(tagName).orElseGet(() ->
-                        tagsRepository.save(Tag.builder()
-                                .name(tagName)
-                                .build()
-                        )
+                        tagsRepository.save(Tag.builder().name(tagName).build())
                 )
         ).collect(Collectors.toSet());
 
         Optional<Destination> existingDestination = destinationRepository.findByName(registerTravelDto.destination());
 
         Destination destination = existingDestination.orElseGet(() ->
-                destinationRepository.save(Destination.builder()
-                        .name(registerTravelDto.destination())
-                        .build())
+                destinationRepository.save(Destination.builder().name(registerTravelDto.destination()).build())
         );
 
-        Travel travel = Travel.builder()
+        Travel travel = travelRepository.save(Travel.builder()
                 .title(registerTravelDto.title())
                 .thumbnail(registerTravelDto.thumbnail())
                 .user(user)
                 .tags(tags)
                 .destination(destination)
-                .build();
-
-        travelRepository.save(travel);
+                .build());
 
         return new RegisterTravelResDto(travel.getId());
     }
 
     @Cacheable("travelFeedLatest")
-    public FeedDto getTravelFeed(String cursor) {
+    public FeedResDto getTravelFeed(String cursor) {
+        log.info(cursor);
         List<Travel> travels = getTravelsByCursor(cursor);
+        List<FeedDto> travelsDto = travels.stream().map(travelMapper::toFeedDto).toList();
 
-        List<TravelDto> travelsDto = travels.stream().map(travel ->
-                TravelDto.fromTravel(travel, false)).toList();
-
-        return new FeedDto(travelsDto);
+        return new FeedResDto(travelsDto);
     }
 
-    public List<TravelDto> getUserTravels(User user, Pageable pageable) {
+    public List<FeedDto> getUserTravels(User user, Pageable pageable) {
         List<Travel> travels = travelRepository.findAllByUser(user, pageable).getContent();
-        return travels.stream().map(travel -> TravelDto.fromTravel(travel, null)).toList();
+        return travels.stream().map(travelMapper::toFeedDto).toList();
     }
 
     public TravelDetailResDto getTravelDetails(User user, Long travelId) {
         boolean isLiked = false;
 
         List<LocationGroup> locationGroups = locationGroupRepository.findAllByTravelId(travelId);
-        List<LocationGroupResDto> dtos =
-                locationGroups.stream().map(locationGroup -> LocationGroupResDto.fromLocationGroup(locationGroup,
-                locationGroup.getPictures().stream().map(PictureResDto::fromPicture).toList())).toList();
+
+        List<TravelDetailDto> travelDetailDtos =
+                locationGroups.stream().map(locationGroup -> locationGroupMapper.toTravelDetailDto(locationGroup,
+                        locationGroup.getPictures().stream().map(pictureMapper::toPictureDto).toList())).toList();
 
         if (user != null) {
             isLiked = likesRepository.existsByUserAndTravelId(user, travelId);
         }
 
-        return new TravelDetailResDto(dtos, isLiked);
+        return new TravelDetailResDto(travelDetailDtos, isLiked);
     }
 
     private List<Travel> getTravelsByCursor(String cursor) {

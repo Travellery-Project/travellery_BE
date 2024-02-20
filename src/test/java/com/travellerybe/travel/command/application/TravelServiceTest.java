@@ -1,9 +1,9 @@
 package com.travellerybe.travel.command.application;
 
-import com.travellerybe.travel.query.dto.request.RegisterTravelDto;
-import com.travellerybe.travel.query.dto.response.RegisterTravelResDto;
+import com.travellerybe.travel.command.dto.request.RegisterTravelDto;
+import com.travellerybe.travel.command.dto.response.RegisterTravelResDto;
 import com.travellerybe.user.command.domain.User;
-import com.travellerybe.user.query.repository.UserRepository;
+import com.travellerybe.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.travellerybe.travel.presentation;
 
 import com.travellerybe.travel.command.application.LocationGroupService;
-import com.travellerybe.travel.query.dto.request.RegisterLocationGroupDto;
+import com.travellerybe.travel.command.dto.request.RegisterLocationGroupDto;
 import com.travellerybe.user.command.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
