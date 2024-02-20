@@ -15,6 +15,8 @@ import java.util.Set;
 public interface TravelMapper {
     @Mapping(target = "tags", source = "tags", qualifiedByName = "mapTags")
     @Mapping(target = "destination", source = "destination", qualifiedByName = "mapDestination")
+    @Mapping(target = "username", source = "travel.user.username")
+    @Mapping(target = "userPicture", source = "travel.user.picture")
     FeedDto toFeedDto(Travel travel);
 
     @Named("mapTags")

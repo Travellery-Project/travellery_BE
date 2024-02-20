@@ -17,7 +17,7 @@ import java.util.List;
 
 public interface TravelRepository extends JpaRepository<Travel, Long> {
 
-    @EntityGraph(attributePaths = {"destination"})
+    @EntityGraph(attributePaths = {"destination", "user"})
     Page<Travel> findAll(Pageable pageable);
 
     @EntityGraph(attributePaths = {"destination", "user"})
