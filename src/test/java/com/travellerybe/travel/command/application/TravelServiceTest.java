@@ -1,8 +1,9 @@
 package com.travellerybe.travel.command.application;
 
-import com.travellerybe.travel.command.dto.request.RegisterTravelDto;
-import com.travellerybe.travel.command.dto.response.RegisterTravelResDto;
-import com.travellerybe.user.command.domain.User;
+import com.travellerybe.travel.application.service.TravelService;
+import com.travellerybe.travel.application.dto.request.RegisterTravelReqDto;
+import com.travellerybe.travel.application.dto.response.RegisterTravelResDto;
+import com.travellerybe.user.domain.User;
 import com.travellerybe.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ class TravelServiceTest {
     @Test
     @DisplayName("travel feed test")
     void insertBulkTravelTest() {
-        RegisterTravelDto registerTravelDto = RegisterTravelDto.builder()
+        RegisterTravelReqDto registerTravelDto = RegisterTravelReqDto.builder()
                 .thumbnail("https://s3.ap-northeast-2.amazonaws.com/travellery/pictures/9f06fe63-7a75-4058-8587-2c29f736e1b1")
                 .title("Title_test_eviction")
                 .destination("Destination")

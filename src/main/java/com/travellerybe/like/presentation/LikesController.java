@@ -1,22 +1,17 @@
 package com.travellerybe.like.presentation;
 
-import com.travellerybe.travel.command.dto.domain.FeedDto;
-import com.travellerybe.travel.command.dto.response.FeedResDto;
-import com.travellerybe.user.command.domain.User;
-import com.travellerybe.like.command.application.LikesService;
-import com.travellerybe.like.command.domain.Likes;
-import com.travellerybe.like.query.dto.request.LikesReqDto;
+import com.travellerybe.travel.application.dto.response.FeedResDto;
+import com.travellerybe.user.domain.User;
+import com.travellerybe.like.application.service.LikesService;
+import com.travellerybe.like.application.dto.request.LikesReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,7 +21,7 @@ public class LikesController {
     private final LikesService likesService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Likes>> getLikes(@AuthenticationPrincipal User user, Pageable pageable) {
+    public ResponseEntity<FeedResDto> getLikes(@AuthenticationPrincipal User user, Pageable pageable) {
         return ResponseEntity.ok().body(likesService.getLikes(user, pageable));
     }
 

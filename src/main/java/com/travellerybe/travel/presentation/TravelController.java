@@ -1,12 +1,12 @@
 package com.travellerybe.travel.presentation;
 
-import com.travellerybe.travel.command.application.TravelService;
-import com.travellerybe.travel.command.dto.request.RegisterTravelDto;
-import com.travellerybe.travel.command.dto.response.FeedResDto;
-import com.travellerybe.travel.command.dto.response.RegisterTravelResDto;
-import com.travellerybe.travel.command.dto.response.TravelDetailResDto;
-import com.travellerybe.travel.command.dto.domain.FeedDto;
-import com.travellerybe.user.command.domain.User;
+import com.travellerybe.travel.application.service.TravelService;
+import com.travellerybe.travel.application.dto.request.RegisterTravelReqDto;
+import com.travellerybe.travel.application.dto.response.FeedResDto;
+import com.travellerybe.travel.application.dto.response.RegisterTravelResDto;
+import com.travellerybe.travel.application.dto.response.TravelDetailResDto;
+import com.travellerybe.travel.application.dto.domain.FeedDto;
+import com.travellerybe.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +27,7 @@ public class TravelController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterTravelResDto> registerTravel(@AuthenticationPrincipal User user,
-                                                               @RequestBody RegisterTravelDto registerTravelDto) {
+                                                               @RequestBody RegisterTravelReqDto registerTravelDto) {
         return ResponseEntity.ok().body(travelService.registerTravel(registerTravelDto, user));
     }
 

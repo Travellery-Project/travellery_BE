@@ -1,10 +1,9 @@
 package com.travellerybe.search.presentation;
 
-import com.travellerybe.search.command.application.SearchService;
-import com.travellerybe.search.command.dto.response.SearchResDto;
-import com.travellerybe.search.command.dto.request.DeleteSearchHistoryReqDto;
-import com.travellerybe.search.command.dto.response.*;
-import com.travellerybe.user.command.domain.User;
+import com.travellerybe.search.application.service.SearchService;
+import com.travellerybe.search.application.dto.response.*;
+import com.travellerybe.search.application.dto.request.DeleteSearchHistoryReqDto;
+import com.travellerybe.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +12,6 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/search")

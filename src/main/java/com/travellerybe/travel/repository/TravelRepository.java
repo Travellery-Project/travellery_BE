@@ -1,9 +1,9 @@
 package com.travellerybe.travel.repository;
 
-import com.travellerybe.travel.command.domain.Destination;
-import com.travellerybe.travel.command.domain.Tag;
-import com.travellerybe.user.command.domain.User;
-import com.travellerybe.travel.command.domain.Travel;
+import com.travellerybe.travel.domain.Destination;
+import com.travellerybe.travel.domain.Tag;
+import com.travellerybe.user.domain.User;
+import com.travellerybe.travel.domain.Travel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

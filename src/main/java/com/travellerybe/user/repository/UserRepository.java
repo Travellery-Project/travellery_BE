@@ -1,6 +1,6 @@
 package com.travellerybe.user.repository;
 
-import com.travellerybe.user.command.domain.User;
+import com.travellerybe.user.domain.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

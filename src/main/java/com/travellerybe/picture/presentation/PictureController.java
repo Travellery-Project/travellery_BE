@@ -1,8 +1,8 @@
 package com.travellerybe.picture.presentation;
 
-import com.travellerybe.picture.command.application.PictureService;
-import com.travellerybe.picture.query.dto.response.PictureDto;
-import com.travellerybe.user.command.domain.User;
+import com.travellerybe.picture.application.PictureService;
+import com.travellerybe.picture.application.dto.response.PictureDto;
+import com.travellerybe.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

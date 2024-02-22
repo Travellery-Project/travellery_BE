@@ -1,10 +1,10 @@
 package com.travellerybe.user.presentation;
 
-import com.travellerybe.user.command.application.UserService;
-import com.travellerybe.user.command.domain.User;
-import com.travellerybe.user.command.dto.domain.UserDto;
-import com.travellerybe.user.command.dto.request.ModifyProfileReqDto;
-import com.travellerybe.user.command.dto.domain.ProfileDto;
+import com.travellerybe.user.application.service.UserService;
+import com.travellerybe.user.domain.User;
+import com.travellerybe.user.application.dto.domain.UserDto;
+import com.travellerybe.user.application.dto.request.ModifyProfileReqDto;
+import com.travellerybe.user.application.dto.domain.ProfileDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
