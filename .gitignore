@@ -39,4 +39,4 @@ out/
 
 ### properties ###
 application.yml
-/travellery-firebase.json
+travellery-firebase.json
