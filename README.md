@@ -19,3 +19,5 @@
     - 메인 피드를 통해 다른 사람들의 여행기록 실시간 공유
 3. 여행 기록 검색
     - 사용자, 태그, 여행지 별로 키워드 검색 가능
+
+[Notion](https://ribbon-sound-6fd.notion.site/Travellery-fea8576d4389423faf1aa6eaebef5d2d)
