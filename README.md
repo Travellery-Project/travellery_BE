@@ -1,5 +1,5 @@
 
-<img width="1747" height="646" alt="Travellery-logo" src="https://github.com/user-attachments/assets/cd61b711-1f3b-457d-b3d8-96f5ebb54787" />
+<img width="822" height="304" alt="Travellery-logo-removebg-preview" src="https://github.com/user-attachments/assets/afc93c12-1c80-4ec7-aac7-12b253e175e3" />
 
 # Travellery 📸🗺️
 
@@ -25,17 +25,37 @@
 - **도로명 주소 변환**: 네이버 Maps API를 통한 정확한 위치 정보 제공
 - **상세 위치 및 설명 추가**: 사용자 정의 장소명 및 여행 기록 설명 작성
 
+
+<div align="center" style="display: flex; justify-content: center; gap: 15px;">
+  <img src="https://github.com/user-attachments/assets/9c65f5fd-49b7-47a0-bfe0-36ceabfd610c" style="width: 22%; max-width: 300px;" alt="Screenshot 6" />
+  <img src="https://github.com/user-attachments/assets/dabac0f9-aae3-41b0-ac27-9ab1aa2b1a26" style="width: 22%; max-width: 300px;" alt="Screenshot 5" />
+  <img src="https://github.com/user-attachments/assets/2842727d-9ba2-4a19-be30-f9353bd0d6e8" style="width: 22%; max-width: 300px;" alt="Screenshot 4" />
+  <img src="https://github.com/user-attachments/assets/5ea39c0f-a677-49d7-ad43-8cf0d0675301" style="width: 22%; max-width: 300px;" alt="Screenshot 3" />
+</div>
+
 ### 🗺️ 지도 기반 여행 시각화
+
 - 촬영 장소별로 지도 위에 사진 오버레이 표시
 - 여행 경로를 연결선으로 시각화하여 동선 확인
 - 장소 순서대로 행선지 표시 및 네비게이션 기능
 - 하단 슬라이드 패널을 통한 장소별 상세 정보 확인
 
+
+<div align="center" style="display: flex; justify-content: center; gap: 15px;">
+        <img src="https://github.com/user-attachments/assets/4486613b-d4d4-47d9-8f09-75be23f0cb30" width="250" alt="Screenshot 4"/>
+        <img src="https://github.com/user-attachments/assets/65170f05-59d8-4a3c-a4db-c759e004d716" width="250" alt="Screenshot 4"/>
+</div>
+
 ### 🌐 여행 기록 공유 (SNS)
 - **실시간 피드**: 메인 피드를 통해 다른 사람들의 여행기록 실시간 공유
 - **소셜 상호작용**: 여행 기록에 대한 찜(좋아요) 기능
 - **찜 목록 관리**: 관심 있는 여행 기록 저장 및 관리
-- **인기 알고리즘**: 찜 수를 기반으로 한 인기 피드 노출
+- **소셜 로그인**: 소셜 로그인을 통한 쉬운 접근성 및 프로필 관리
+
+<div align="center" style="display: flex; justify-content: center; gap: 15px;">
+  <img src="https://github.com/user-attachments/assets/feab8ec7-4bbb-44c0-ad20-a28e420d5b1d" style="width: 22%; max-width: 300px;" alt="Screenshot 6" />
+  <img src="https://github.com/user-attachments/assets/4d8144cd-863b-4559-91df-ff4796734b66" style="width: 22%; max-width: 300px;" alt="Screenshot 5" />
+</div>
 
 ### 🔍 여행 기록 검색
 - **통합 검색**: 사용자, 태그, 여행지별로 키워드 검색 가능
