@@ -1,3 +1,6 @@
+
+<img width="1747" height="646" alt="Travellery-logo" src="https://github.com/user-attachments/assets/cd61b711-1f3b-457d-b3d8-96f5ebb54787" />
+
 # Travellery 📸🗺️
 
 여행 중에 찍은 수많은 사진들을 언제 어디서 찍었는지 한눈에 확인할 수 있는 모바일 앱입니다. 스마트폰으로 찍은 사진들을 앱에 등록하기만 한다면 언제, 어디서 찍었던 사진인지 장소별로 그룹핑하여 지도위에 순서대로 보여줍니다. 이렇게 등록한 나만의 여행기록들을 다른 사람과 함께 공유해 보세요!
