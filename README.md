@@ -1,5 +1,5 @@
 
-<img width="822" height="304" alt="Travellery-logo-removebg-preview" src="https://github.com/user-attachments/assets/afc93c12-1c80-4ec7-aac7-12b253e175e3" />
+<img width="400" alt="Travellery-logo-removebg-preview" src="https://github.com/user-attachments/assets/afc93c12-1c80-4ec7-aac7-12b253e175e3" />
 
 # Travellery 📸🗺️
 
@@ -42,8 +42,8 @@
 
 
 <div align="center" style="display: flex; justify-content: center; gap: 15px;">
-        <img src="https://github.com/user-attachments/assets/4486613b-d4d4-47d9-8f09-75be23f0cb30" width="250" alt="Screenshot 4"/>
-        <img src="https://github.com/user-attachments/assets/65170f05-59d8-4a3c-a4db-c759e004d716" width="250" alt="Screenshot 4"/>
+        <img src="https://github.com/user-attachments/assets/4486613b-d4d4-47d9-8f09-75be23f0cb30" style="width: 22%; max-width: 300px;"/>
+        <img src="https://github.com/user-attachments/assets/65170f05-59d8-4a3c-a4db-c759e004d716" style="width: 22%; max-width: 300px;"/>
 </div>
 
 ### 🌐 여행 기록 공유 (SNS)
