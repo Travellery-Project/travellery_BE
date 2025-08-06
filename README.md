@@ -90,3 +90,11 @@
   <img src="https://github.com/user-attachments/assets/c5da9bb9-591a-48a7-8874-c6bdec7edeb6" style="width: 22%; max-width: 300px;" alt="Screenshot 5" />
 </div>
 
+## Travellery 프로젝트를 하면서...
+
+- [N + 1 과 페이지네이션 (feat. batch_fetch_size)](https://www.notion.so/N-1-feat-batch_fetch_size-44c5226f26ab4196b6f4803299bc9beb?pvs=21)
+
+- [서버 성능 개선 맛보기(feat. Jmeter)](https://www.notion.so/feat-Jmeter-0335ab28dee84d599d4ccc94593b9598?pvs=21)
+
+- [이미지 업로드 작업과 서버 가용성](https://www.notion.so/6556adc996974a8a8ef9a94736d3142e?pvs=21)
+
